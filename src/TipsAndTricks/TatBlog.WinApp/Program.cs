@@ -52,23 +52,43 @@ using TatBlog.Services.Blogs;
 //}
 
 
-//-----để xem hoạt động của các phương thức vừa định nghĩa----
-// Tạo đối tượng DBContext để quản lý phiên làm việc
-// với CSDL và trạng thái của đối tượng
+//--------------------để xem hoạt động của các phương thức vừa định nghĩa------------------------
+//// Tạo đối tượng DBContext để quản lý phiên làm việc
+//// với CSDL và trạng thái của đối tượng
+//var context = new BlogDbContext();
+//// Tạo đối tượng BlogRepository
+//IBlogRepository blogRepo = new BlogRepository(context);
+//// Tìm 3 bài viết được xem/đọc nhiều nhất
+//var posts = await blogRepo.GetPopularArticlesAsync(3);
+
+//// Xuất danh sách bài viết ra màn hình
+//foreach (var post in posts)
+//{
+//    Console.WriteLine("ID               : {0}", post.Id);
+//    Console.WriteLine("Title            : {0}", post.Title);
+//    Console.WriteLine("ViewCount        : {0}", post.ViewCount);
+//    Console.WriteLine("Date             : {0:MM/dd/yyyy}", post.PostedDate);
+//    Console.WriteLine("Author           : {0}", post.Author);
+//    Console.WriteLine("Category         : {0}", post.Category);
+//    Console.WriteLine("".PadRight(80, '-'));
+//}
+
+
+//----------------để kiểm tra kết quả của phương thức vừa tạo ----------------------------
+
+// tạo đối tượng dbcontext để quản lý phiên làm việc
+// với csdl và trạng thái của đối tượng
 var context = new BlogDbContext();
 // Tạo đối tượng BlogRepository
 IBlogRepository blogRepo = new BlogRepository(context);
-// Tìm 3 bài viết được xem/đọc nhiều nhất
-var posts = await blogRepo.GetPopularArticlesAsync(3);
+// Lấy danh sách chuyên mục
+var categories = await blogRepo.GetCategoriesAsync();
 
-// Xuất danh sách bài viết ra màn hình
-foreach (var post in posts)
+Console.WriteLine("{0,-5}{1,-50}{2,10}",
+    "ID", "Name", "Cuont");
+
+// Xuất ra màn hình
+foreach (var item in categories)
 {
-    Console.WriteLine("ID               : {0}", post.Id);
-    Console.WriteLine("Title            : {0}", post.Title);
-    Console.WriteLine("ViewCount        : {0}", post.ViewCount);
-    Console.WriteLine("Date             : {0:MM/dd/yyyy}", post.PostedDate);
-    Console.WriteLine("Author           : {0}", post.Author);
-    Console.WriteLine("Category         : {0}", post.Category);
-    Console.WriteLine("".PadRight(80, '-'));
+    Console.WriteLine("{0,-5}{1,-50}{2,10}", item.Id, item.Name, item.PostCount);
 }
