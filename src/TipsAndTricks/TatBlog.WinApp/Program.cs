@@ -1,6 +1,7 @@
 ﻿using TatBlog.Data.Contexts;
 using TatBlog.Data.Seeders;
 using TatBlog.Services.Blogs;
+using TatBlog.WinApp;
 
 
 ////Tạo đối tượng DBContext để quản lý phiên làm việc
@@ -76,19 +77,43 @@ using TatBlog.Services.Blogs;
 
 //----------------để kiểm tra kết quả của phương thức vừa tạo ----------------------------
 
-// tạo đối tượng dbcontext để quản lý phiên làm việc
-// với csdl và trạng thái của đối tượng
+//// tạo đối tượng dbcontext để quản lý phiên làm việc
+//// với csdl và trạng thái của đối tượng
+//var context = new BlogDbContext();
+//// Tạo đối tượng BlogRepository
+//IBlogRepository blogRepo = new BlogRepository(context);
+//// Lấy danh sách chuyên mục
+//var categories = await blogRepo.GetCategoriesAsync();
+
+//Console.WriteLine("{0,-5}{1,-50}{2,10}",
+//    "ID", "Name", "Cuont");
+
+//// Xuất ra màn hình
+//foreach (var item in categories)
+//{
+//    Console.WriteLine("{0,-5}{1,-50}{2,10}", item.Id, item.Name, item.PostCount);
+//}
+
+
+//----------------------------để gọi hàm và kiểm tra kết quả--------------------------------
+
+// Tạo đối tượng DBContext để quản lý phiên làm việc
+// với CSDL và trạng thái của đối tượng
 var context = new BlogDbContext();
 // Tạo đối tượng BlogRepository
 IBlogRepository blogRepo = new BlogRepository(context);
-// Lấy danh sách chuyên mục
-var categories = await blogRepo.GetCategoriesAsync();
-
-Console.WriteLine("{0,-5}{1,-50}{2,10}",
-    "ID", "Name", "Cuont");
-
+var pagingParams = new PagingPrams
+{
+    PageNumber = 1, //Lấy kết quả ở trang số 1
+    PageSize = 5, // Lấy 5 mẫu tin
+    SortColumn = "Name", // Sắp xếp theo tên
+    SortOrder = "DESC" // Theo chiều giảm dần
+};
+// Lấy danh sách từ khóa
+var tagsList = await blogRepo.GetPagedTagsAsync(pagingParams);
 // Xuất ra màn hình
-foreach (var item in categories)
+Console.WriteLine("{0,-5}{1,-50}{2,10}", "ID", "Name", "Count");
+foreach (var item in tagsList)
 {
     Console.WriteLine("{0,-5}{1,-50}{2,10}", item.Id, item.Name, item.PostCount);
 }

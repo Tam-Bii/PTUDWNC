@@ -36,8 +36,10 @@ namespace TatBlog.Services.Blogs
         bool showOnMenu = false,
         CancellationToken cancellationToken = default);
 
-        //Task<IPagedList<TagItem>> GetPagedTagsAsync(
-        //    IPagingParams pagingParams,
-        //    CancellationToken cancellationToken = default);
+        // LẤy dánh sách từ khoá/thẻ và phân theo trang
+        // Các tham số pagingParams
+        Task<IPagedList<TagItem>> GetPagedTagsAsync(
+            IPagingParams pagingParams,
+            CancellationToken cancellationToken = default);
     }
 }
