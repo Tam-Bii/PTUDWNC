@@ -6,29 +6,35 @@ namespace TatBlog.WebApp.Controllers
 {
     public class BlogController : Controller
     {
-        private readonly IBlogRepository _blogRepository;
-
-        public BlogController(IBlogRepository blogRepository)
+        public IActionResult Index()
         {
-            _blogRepository = blogRepository;
+            ViewBag.CurrentTime = DateTime.Now.ToString("HH:mm:ss");
+
+            return View();
         }
-        public async Task<IActionResult> Index(
-            [FromQuery(Name = "k")] string keyword = null,
-            [FromQuery(Name = "p")] int pageNumber = 1,
-            [FromQuery(Name = "ps")] int pageSize = 3)
-        {
-            var postQuery = new PostQuery()
-            {
-                PublishedOnly = true,
-                KeyWord = keyword,
-            };
+        //private readonly IBlogRepository _blogRepository;
 
-            var postsList = await _blogRepository.GetPagedPostsAsync(postQuery, pageNumber, pageSize);
+        //public BlogController(IBlogRepository blogRepository)
+        //{
+        //    _blogRepository = blogRepository;
+        //}
+        //public async Task<IActionResult> Index(
+        //    [FromQuery(Name = "k")] string keyword = null,
+        //    [FromQuery(Name = "p")] int pageNumber = 1,
+        //    [FromQuery(Name = "ps")] int pageSize = 3)
+        //{
+        //    var postQuery = new PostQuery()
+        //    {
+        //        PublishedOnly = true,
+        //        KeyWord = keyword,
+        //    };
 
-            ViewBag.PostQuery = postQuery;
+        //    var postsList = await _blogRepository.GetPagedPostsAsync(postQuery, pageNumber, pageSize);
 
-            return View(postsList);
-        }
+        //    ViewBag.PostQuery = postQuery;
+
+        //    return View(postsList);
+        //}
 
         public IActionResult About() => View();
         public IActionResult Contact() => View();
