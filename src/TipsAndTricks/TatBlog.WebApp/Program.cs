@@ -43,8 +43,8 @@ app.Run();
 
 using (var scope = app.Services.CreateScope())
 {
-    var seeder = scope.ServiceProvider.GetService<IDataSeeder>(); ;
-    seeder.Initialize();
+    var seeder = scope.ServiceProvider.GetService<IDataSeeder>(); 
+    seeder?.Initialize();
 }
 
 app.Run();
