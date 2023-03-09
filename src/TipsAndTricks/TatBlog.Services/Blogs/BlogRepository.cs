@@ -203,8 +203,5 @@ public class BlogRepository : IBlogRepository
             cancellationToken);
     }
 
-    Task<IPagedList> IBlogRepository.GetPagedPostsAsync(PostQuery condition, int pageNumber, int pageSize, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    
 }

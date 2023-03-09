@@ -42,7 +42,7 @@ namespace TatBlog.Services.Blogs
             IPagingParams pagingParams,
             CancellationToken cancellationToken = default);
 
-        Task<IPagedList> GetPagedPostsAsync(
+        Task<IPagedList<Post>> GetPagedPostsAsync(
             PostQuery condition, int pageNumber, int pageSize,
             CancellationToken cancellationToken = default);
     }

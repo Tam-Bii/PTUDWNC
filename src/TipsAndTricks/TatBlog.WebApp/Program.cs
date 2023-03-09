@@ -1,6 +1,17 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using TatBlog.WebApp.Extensions;
 
-app.MapGet("/", () => "Hello World!");
+var builder = WebApplication.CreateBuilder(args);
+{
+    builder
+       .ConfigureMvc()
+       .ConfigureServices();
+}
+
+var app = builder.Build();
+{
+    app.UseRequestPipeline();
+    app.UseBlogRoutes();
+    app.UseDataSeeder();
+}
 
 app.Run();
