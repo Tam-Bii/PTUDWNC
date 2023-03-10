@@ -29,7 +29,7 @@
 							Tác giả:
 						</small>
 						<a asp-controller="Blog"
-						   asp-action="Authors"
+						   asp-action="Author"
 						   asp-route-slug="@Model.Author.UrlSlug"
 						class="text-decoration-none">
 							<span class="text-primary">
@@ -39,10 +39,9 @@
 						<small class="text-muted">
 							Chủ đề:
 						</small>
-						/small>
 						<a asp-controller="Blog"
-						   asp-action="Authors"
-						   asp-route-slug="@Model.Author.UrlSlug"
+						   asp-action="Category"
+						   asp-route-slug="@Model.Category.UrlSlug"
 						class="text-decoration-none">
 							<span class="text-primary">
 								@Model.Category.Name
