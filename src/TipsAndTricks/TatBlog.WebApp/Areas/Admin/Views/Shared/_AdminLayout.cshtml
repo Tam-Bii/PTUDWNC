@@ -14,20 +14,11 @@
 </head>
 <body>
     @*Thanh tiêu đề, logo, menu*@
-    <partial name="_Header" />
+    <partial name="_NavBar" />
 
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-9">
-                @*Phần nội dung chính*@
-                @RenderBody()
-            </div>
-            <div class="col-3 border-start">
-                @*Danh sách chuyên mục, tag cloud, ...*@
-                <partial name="_SideBar" />
-            </div>
-        </div>
-    </div>
+         @RenderBody()
+    </div>>
 
     <footer class="border-top footer text-muted">
         <div class="container-fluid text-center">
