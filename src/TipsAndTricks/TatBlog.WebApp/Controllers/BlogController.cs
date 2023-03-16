@@ -24,7 +24,7 @@ namespace TatBlog.WebApp.Controllers
             var postQuery = new PostQuery()
             {
                 PublishedOnly = true,
-                KeyWord = keyword,
+                Keyword = keyword,
             };
 
             var postsList = await _blogRepository.GetPagedPostsAsync(postQuery, pageNumber, pageSize);

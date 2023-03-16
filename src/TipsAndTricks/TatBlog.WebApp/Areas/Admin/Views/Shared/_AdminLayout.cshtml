@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["PageTitle"]  2023 - Tips & Tricks Blog </title>
+    <title>@ViewData["PageTitle"] 2023 - Tips & Tricks Blog </title>
 
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
@@ -14,19 +14,11 @@
 </head>
 <body>
     @*Thanh tiêu đề, logo, menu*@
-    <partial name="_Header" />
+    <partial name="_NavBar" />
 
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-9">
-                @*Phần nội dung chính*@
-                @RenderBody()
-            </div>
-            <div class="col-3 border-start">
-                @*Danh sách chuyên mục, tag cloud, ...*@
-                <partial name="_SideBar" />
-            </div>
-        </div>
+
+         @RenderBody()
     </div>
 
     <footer class="border-top footer text-muted">
