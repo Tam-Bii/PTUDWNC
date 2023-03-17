@@ -301,7 +301,20 @@ public class BlogRepository : IBlogRepository
         return post.Published;
     }
 
-    public async Task<Post> CreateOrUpdatePostAsync(
+	public async Task<bool> DeletePostAsync(
+		int postId, CancellationToken cancellationToken = default)
+	{
+		var post = await _context.Set<Post>().FindAsync(postId);
+
+		if (!post.Published) return false;
+
+		_context.Set<Post>().Remove(post);
+		var rowsCount = await _context.SaveChangesAsync(cancellationToken);
+
+		return rowsCount > 0;
+	}
+
+	public async Task<Post> CreateOrUpdatePostAsync(
         Post post, IEnumerable<string> tags,
         CancellationToken cancellationToken = default)
     {

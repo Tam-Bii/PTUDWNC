@@ -54,6 +54,15 @@
 							@(post.Published ? "Có" : "Không")
 						</a>
 					</td>
+					<td>
+						<a asp-area="Admin"
+						   asp-controller="Posts"
+						   asp-action="DeletePost"
+						   asp-route-id="@post.Id"
+					       class="btn btn-outline-danger">
+							Xoá
+						</a>
+					</td>
 				</tr>
 			}
 		</tbody>
