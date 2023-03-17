@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -287,6 +288,19 @@ public class BlogRepository : IBlogRepository
 
     }
 
+    public async Task<bool> TogglePublishedFlagAsync(
+        int postId, CancellationToken cancellationToken = default)
+    {
+        var post = await _context.Set<Post>().FindAsync(postId);
+
+        if (post is null) return false;
+
+        post.Published = !post.Published;
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return post.Published;
+    }
+
     public async Task<Post> CreateOrUpdatePostAsync(
         Post post, IEnumerable<string> tags,
         CancellationToken cancellationToken = default)
@@ -323,6 +337,8 @@ public class BlogRepository : IBlogRepository
 
             post.Tags.Add(tag);
         }
+
+        
 
         post.Tags = post.Tags.Where(t => validTags.ContainsKey(t.UrlSlug)).ToList();
 

@@ -181,6 +181,12 @@ namespace WebApp.Areas.Admin.Controllers
 			});
 		}
 
+		public async Task<IActionResult> SwitchPublishedFlagAsync(int id)
+		{
+			await _blogRepository.TogglePublishedFlagAsync(id);
+			return RedirectToAction(nameof(Index));
+		}
+
 
 	}
 }
