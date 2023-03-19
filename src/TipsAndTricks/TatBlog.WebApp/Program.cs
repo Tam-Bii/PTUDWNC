@@ -13,9 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
         .ConfigureFluentValidation();
 }
 
-//Thêm dữ liêu mẫu vào CSDL
-
-
 var app = builder.Build();
 {
     app.UseRequestPipeline();
@@ -23,6 +20,5 @@ var app = builder.Build();
     app.UseDataSeeder();
 
 }
-
 
 app.Run();
