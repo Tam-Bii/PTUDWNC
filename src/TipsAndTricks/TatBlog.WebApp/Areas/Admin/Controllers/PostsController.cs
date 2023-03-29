@@ -16,8 +16,8 @@ namespace WebApp.Areas.Admin.Controllers
 
 		private readonly ILogger<PostsController> _logger;
 		private readonly IBlogRepository _blogRepository;
-		private readonly IMapper _mapper;
 		private readonly IMediaManager _mediaManager;
+		private readonly IMapper _mapper;
 
 		public PostsController(
 			ILogger<PostsController> logger,
@@ -147,14 +147,14 @@ namespace WebApp.Areas.Admin.Controllers
 
 		private async Task PopulatePostFilterModeAsync(PostFilterModel model)
 		{
-			var authors = await _blogRepository.GetAuthorsAsync();
+			//var authors = await _blogRepository.GetAuthorsAsync();
 			var categories = await _blogRepository.GetCategoriesAsync();
 
-			model.AuthorList = authors.Select(a => new SelectListItem()
-			{
-				Text = a.FullName,
-				Value = a.Id.ToString()
-			});
+			//model.AuthorList = authors.Select(a => new SelectListItem()
+			//{
+			//	Text = a.FullName,
+			//	Value = a.Id.ToString()
+			//});
 
 			model.CategoryList = categories.Select(c => new SelectListItem()
 			{
@@ -165,14 +165,14 @@ namespace WebApp.Areas.Admin.Controllers
 
 		private async Task PopulatePostEditModeAsync(PostEditModel model)
 		{
-			var authors = await _blogRepository.GetAuthorsAsync();
+			//var authors = await _blogrepository.getauthorsasync();
 			var categories = await _blogRepository.GetCategoriesAsync();
 
-			model.AuthorList = authors.Select(a => new SelectListItem()
-			{
-				Text = a.FullName,
-				Value = a.Id.ToString()
-			});
+			//model.AuthorList = authors.Select(a => new SelectListItem()
+			//{
+			//	Text = a.FullName,
+			//	Value = a.Id.ToString()
+			//});
 
 			model.CategoryList = categories.Select(c => new SelectListItem()
 			{
