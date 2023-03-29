@@ -364,9 +364,4 @@ public class BlogRepository : IBlogRepository
 
         return post;
     }
-
-	public Task GetAuthorsAsync()
-	{
-		throw new NotImplementedException();
-	}
 }

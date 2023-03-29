@@ -7,10 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Extensions\WebApplication-Extensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="wwwroot\Extensions\WebApplication-Extensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.2" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
@@ -22,10 +30,8 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Endpoints\" />
-    <Folder Include="wwwroot\Extensions\" />
     <Folder Include="wwwroot\Filters\" />
     <Folder Include="wwwroot\Mapsters\" />
-    <Folder Include="wwwroot\Models\" />
     <Folder Include="wwwroot\Validations\" />
     <Folder Include="wwwroot\uploads\pictures\" />
   </ItemGroup>

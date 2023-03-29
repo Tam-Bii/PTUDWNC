@@ -16,17 +16,20 @@ namespace WebApp.Areas.Admin.Controllers
 
 		private readonly ILogger<PostsController> _logger;
 		private readonly IBlogRepository _blogRepository;
+		private readonly IAuthorRepository _authorRepository;
 		private readonly IMediaManager _mediaManager;
 		private readonly IMapper _mapper;
 
 		public PostsController(
 			ILogger<PostsController> logger,
 			IBlogRepository blogRepository,
+			IAuthorRepository authorRepository,
 			IMediaManager mediaManager,
 			IMapper mapper)
 		{
 			_logger = logger;
 			_blogRepository = blogRepository;
+			_authorRepository = authorRepository;
 			_mediaManager = mediaManager;
 			_mapper = mapper;
 		}

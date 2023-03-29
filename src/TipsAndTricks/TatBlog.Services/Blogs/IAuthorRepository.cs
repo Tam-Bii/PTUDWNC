@@ -32,15 +32,15 @@ public interface IAuthorRepository
 		CancellationToken cancellationToken = default);
 
 	Task<bool> AddOrUpdateAsync(
-		Author author, 
+		Author author,
 		CancellationToken cancellationToken = default);
-	
+
 	Task<bool> DeleteAuthorAsync(
-		int authorId, 
+		int authorId,
 		CancellationToken cancellationToken = default);
 
 	Task<bool> IsAuthorSlugExistedAsync(
-		int authorId, string slug, 
+		int authorId, string slug,
 		CancellationToken cancellationToken = default);
 
 	Task<bool> SetImageUrlAsync(
