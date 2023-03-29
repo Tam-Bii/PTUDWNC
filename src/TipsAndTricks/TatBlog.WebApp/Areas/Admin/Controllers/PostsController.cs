@@ -187,7 +187,7 @@ namespace WebApp.Areas.Admin.Controllers
 			return RedirectToAction(nameof(Index));
 		}
 
-		public async Task<IActionResult> DeketePost(int id)
+		public async Task<IActionResult> DeletePost(int id)
 		{
 			await _blogRepository .DeletePostAsync(id);
 			return RedirectToAction(nameof(Index));
