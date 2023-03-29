@@ -1,4 +1,6 @@
-﻿namespace TatBlog.WebApi.wwwroot.Models
+﻿using TatBlog.Core.Contracts;
+
+namespace TatBlog.WebApi.Models
 {
 	public class PagingModel : IPagingParams
 	{

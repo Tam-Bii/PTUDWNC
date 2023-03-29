@@ -1,4 +1,4 @@
-﻿namespace TatBlog.WebApi.wwwroot.Models
+﻿namespace TatBlog.WebApi.Models
 {
 	public class AuthorFilterModel : PagingModel
 	{

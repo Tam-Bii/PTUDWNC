@@ -1,7 +1,8 @@
-﻿namespace TatBlog.WebApi.wwwroot.Models
+﻿namespace TatBlog.WebApi.Models
 {
 	public class PostDto
 	{
+
 		public int Id { get; set; }
 
 		public string Title { get; set; }

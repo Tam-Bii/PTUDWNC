@@ -1,6 +1,6 @@
-﻿namespace TatBlog.WebApi.wwwroot.Models
+﻿namespace TatBlog.WebApi.Models
 {
-	public class CategoryDto
+	public class TagDto
 	{
 		public int Id { get; set; }
 
@@ -8,4 +8,5 @@
 
 		public string UrlSlug { get; set; }
 	}
+
 }

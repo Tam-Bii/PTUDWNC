@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Extensions\WebApplication-Extensions.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="wwwroot\Extensions\WebApplication-Extensions.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
@@ -29,10 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Endpoints\" />
-    <Folder Include="wwwroot\Filters\" />
-    <Folder Include="wwwroot\Mapsters\" />
-    <Folder Include="wwwroot\Validations\" />
+    <Folder Include="Endpoints\" />
+    <Folder Include="Filters\" />
+    <Folder Include="Validations\" />
     <Folder Include="wwwroot\uploads\pictures\" />
   </ItemGroup>
 
