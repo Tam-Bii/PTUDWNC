@@ -16,17 +16,20 @@ namespace WebApp.Areas.Admin.Controllers
 
 		private readonly ILogger<PostsController> _logger;
 		private readonly IBlogRepository _blogRepository;
+		private readonly IAuthorRepository _authorRepository;
 		private readonly IMapper _mapper;
 		private readonly IMediaManager _mediaManager;
 
 		public PostsController(
 			ILogger<PostsController> logger,
 			IBlogRepository blogRepository,
+			IAuthorRepository authorRepository,
 			IMediaManager mediaManager,
 			IMapper mapper)
 		{
 			_logger = logger;
 			_blogRepository = blogRepository;
+			_authorRepository = authorRepository;
 			_mediaManager = mediaManager;
 			_mapper = mapper;
 		}
@@ -38,6 +41,7 @@ namespace WebApp.Areas.Admin.Controllers
 		{
 
 			_logger.LogInformation("Tạo điều kiện truy vấn");
+
 
 			var postQuery = _mapper.Map<PostQuery>(model);
 
@@ -65,7 +69,6 @@ namespace WebApp.Areas.Admin.Controllers
 			var model = post == null
 				? new PostEditModel()
 				: _mapper.Map<PostEditModel>(post);
-
 
 			await PopulatePostEditModeAsync(model);
 
@@ -145,9 +148,30 @@ namespace WebApp.Areas.Admin.Controllers
 				: Json(true);
 		}
 
+
+		public async Task<IActionResult> SwithPulished(int id)
+		{
+			await _blogRepository.TogglePublishedFlagAsync(id);
+			return RedirectToAction(nameof(Index));
+		}
+
+
+		public async Task<IActionResult> DeletePost(int id)
+		{
+			await _blogRepository.DeletePostAsync(id);
+			return RedirectToAction(nameof(Index));
+		}
+
+
+		public async Task<IActionResult> DefaultFilter(PostFilterModel model)
+		{
+			model = new PostFilterModel();
+			return RedirectToAction(nameof(Index));
+		}
+
 		private async Task PopulatePostFilterModeAsync(PostFilterModel model)
 		{
-			var authors = await _blogRepository.GetAuthorsAsync();
+			var authors = await _authorRepository.GetAuthorsAsync();
 			var categories = await _blogRepository.GetCategoriesAsync();
 
 			model.AuthorList = authors.Select(a => new SelectListItem()
@@ -165,7 +189,7 @@ namespace WebApp.Areas.Admin.Controllers
 
 		private async Task PopulatePostEditModeAsync(PostEditModel model)
 		{
-			var authors = await _blogRepository.GetAuthorsAsync();
+			var authors = await _authorRepository.GetAuthorsAsync();
 			var categories = await _blogRepository.GetCategoriesAsync();
 
 			model.AuthorList = authors.Select(a => new SelectListItem()
@@ -181,16 +205,6 @@ namespace WebApp.Areas.Admin.Controllers
 			});
 		}
 
-		public async Task<IActionResult> SwitchPublishedFlagAsync(int id)
-		{
-			await _blogRepository.TogglePublishedFlagAsync(id);
-			return RedirectToAction(nameof(Index));
-		}
 
-		public async Task<IActionResult> DeketePost(int id)
-		{
-			await _blogRepository .DeletePostAsync(id);
-			return RedirectToAction(nameof(Index));
-		}
 	}
 }

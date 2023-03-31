@@ -29,8 +29,8 @@ public interface IBlogRepository
         int postId,
         CancellationToken cancellationToken = default);
 
-    Task<IList<AuthorItem>> GetAuthorsAsync(
-        CancellationToken cancellationToken = default);
+    //Task<IList<AuthorItem>> GetAuthorsAsync(
+    //    CancellationToken cancellationToken = default);
 
     Task<IList<CategoryItem>> GetCategoriesAsync(
         bool showOnMenu = false,
