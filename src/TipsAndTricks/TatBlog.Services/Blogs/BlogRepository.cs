@@ -3,6 +3,8 @@ using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using TatBlog.Core.Contracts;
@@ -19,8 +21,9 @@ public class BlogRepository : IBlogRepository
 {
 
     private readonly BlogDbContext _context;
+	private object _memoryCache;
 
-    public BlogRepository(BlogDbContext context)
+	public BlogRepository(BlogDbContext context)
     {
         _context = context;
     }
@@ -374,5 +377,75 @@ public class BlogRepository : IBlogRepository
 		var projectedPosts = mapper(posts);
 
 		return await projectedPosts.ToPagedListAsync(pagingParams);
+	}
+
+
+	public async Task<IPagedList<Category>> GetCategoryByIdAsync(CategoryQuery query, int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+	{
+		return await FilterCategory(query).ToPagedListAsync(
+								pageNumber,
+								pageSize,
+								nameof(Category.Name),
+								"DESC",
+								cancellationToken);
+	}
+	private IQueryable<Category> FilterCategory(CategoryQuery query)
+	{
+		IQueryable<Category> categoryQuery = _context.Set<Category>()
+												  .Include(c => c.Posts);
+
+		if (query.ShowOnMenu)
+		{
+			categoryQuery = categoryQuery.Where(x => x.ShowOnMenu);
+		}
+
+		if (!string.IsNullOrWhiteSpace(query.UrlSlug))
+		{
+			categoryQuery = categoryQuery.Where(x => x.UrlSlug == query.UrlSlug);
+		}
+
+		if (!string.IsNullOrWhiteSpace(query.Keyword))
+		{
+			categoryQuery = categoryQuery.Where(x => x.Name.Contains(query.Keyword) ||
+						 x.Description.Contains(query.Keyword) ||
+						 x.Posts.Any(p => p.Title.Contains(query.Keyword)));
+		}
+
+		return categoryQuery;
+	}
+
+	public async Task AddOrUpdateCategoryAsync(Category category, CancellationToken cancellationToken = default)
+	{
+		if (category.Id > 0)
+			_context.Update(category);
+		else
+			_context.Add(category);
+
+		await _context.SaveChangesAsync(cancellationToken);
+	}
+
+	public async Task ChangedCategoryStatusAsync(int id, CancellationToken cancellationToken = default)
+	{
+		await _context.Set<Category>()
+						  .Where(x => x.Id == id)
+						  .ExecuteUpdateAsync(c => c.SetProperty(x => x.ShowOnMenu, x => !x.ShowOnMenu), cancellationToken);
+	}
+
+	public async Task DeleteCategoryByIdAsync(int? id, CancellationToken cancellationToken = default)
+	{
+		if (id == null || _context.Categories == null)
+		{
+			Console.WriteLine("Không có danh mục nào");
+			return;
+		}
+		var category = await _context.Set<Category>().FindAsync(id);
+
+		if (category != null)
+		{
+			_context.Categories.Remove(category);
+			await _context.SaveChangesAsync(cancellationToken);
+
+			Console.WriteLine($"Đã xóa danh mục với id {id}");
+		}
 	}
 }
