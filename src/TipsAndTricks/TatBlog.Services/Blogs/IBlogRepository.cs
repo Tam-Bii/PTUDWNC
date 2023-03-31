@@ -72,4 +72,9 @@ public interface IBlogRepository
     Task<bool> DeletePostAsync(
         int postId, CancellationToken cancellationToken = default);
 
+    Task<IPagedList<T>> GetPagedPostsAsync<T>(
+            PostQuery postQuery,
+            IPagingParams pagingParams,
+            Func<IQueryable<Post>, IQueryable<T>> mapper);
+
 }

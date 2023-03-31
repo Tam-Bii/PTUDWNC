@@ -365,4 +365,14 @@ public class BlogRepository : IBlogRepository
         return post;
     }
 
+	public async Task<IPagedList<T>> GetPagedPostsAsync<T>(
+			PostQuery postQuery,
+			IPagingParams pagingParams,
+			Func<IQueryable<Post>, IQueryable<T>> mapper)
+	{
+		var posts = FilterPosts(postQuery);
+		var projectedPosts = mapper(posts);
+
+		return await projectedPosts.ToPagedListAsync(pagingParams);
+	}
 }
