@@ -6,6 +6,7 @@ using TatBlog.Core.DTO;
 using TatBlog.Core.Entities;
 using TatBlog.Services.Blogs;
 using TatBlog.Services.Media;
+using TatBlog.WebApi.Filters;
 using TatBlog.WebApi.Models;
 
 namespace TatBlog.WebApi.Endpoints;
@@ -41,6 +42,22 @@ public static class AuthorEndpoints
 			.WithName("DeleteAnAuthor")
 			.Produces(204)
 			.Produces(404);
+
+		routeGroupBuilder.MapPost("/", AddAuthor)
+			.WithName("AddNewAuthor")
+			.AddEndpointFilter<ValidatorFilter<AuthorEditModel>>()
+			.Produces(201)
+			.Produces(400)
+			.Produces(409);
+
+		routeGroupBuilder.MapPut("/{id:int}", UpdateAuthor)
+			.WithName("UpdateAnAuthor")
+			.AddEndpointFilter<ValidatorFilter<AuthorEditModel>>()
+			.Produces(204)
+			.Produces(400)
+			.Produces(409);
+
+
 		return app;
 	}
 	private static async Task<IResult> GetAuthors(
@@ -127,24 +144,6 @@ public static class AuthorEndpoints
 			mapper.Map<AuthorItem>(author));
 	}
 
-	private static async Task<IResult> SetAuthorPicture(
-		int id, IFormFile imageFile,
-		IAuthorRepository authorRepository,
-		IMediaManager mediaManager)
-	{
-		var imageUrl = await mediaManager.SaveFileAsync(
-			imageFile.OpenReadStream(),
-			imageFile.FileName, imageFile.ContentType);
-
-		if (string.IsNullOrWhiteSpace(imageUrl))
-		{
-			return Results.BadRequest("Không lưu được tập tin");
-		}
-
-		await authorRepository.SetImageUrlAsync(id, imageUrl);
-		return Results.Ok(imageUrl);
-	}
-
 	private static async Task<IResult> UpdateAuthor(
 		int id,
 		AuthorEditModel model,
@@ -165,6 +164,25 @@ public static class AuthorEndpoints
 		return await authorRepository.AddOrUpdateAsync(author)
 			? Results.NoContent()
 			: Results.NotFound();
+	}
+
+
+	private static async Task<IResult> SetAuthorPicture(
+		int id, IFormFile imageFile,
+		IAuthorRepository authorRepository,
+		IMediaManager mediaManager)
+	{
+		var imageUrl = await mediaManager.SaveFileAsync(
+			imageFile.OpenReadStream(),
+			imageFile.FileName, imageFile.ContentType);
+
+		if (string.IsNullOrWhiteSpace(imageUrl))
+		{
+			return Results.BadRequest("Không lưu được tập tin");
+		}
+
+		await authorRepository.SetImageUrlAsync(id, imageUrl);
+		return Results.Ok(imageUrl);
 	}
 
 	private static async Task<IResult> DeleteAuthor(
