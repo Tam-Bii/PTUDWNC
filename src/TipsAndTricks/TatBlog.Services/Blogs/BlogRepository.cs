@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ public class BlogRepository : IBlogRepository
 {
 
     private readonly BlogDbContext _context;
-	private object _memoryCache;
+    private readonly IMemoryCache _memoryCache;
 
 	public BlogRepository(BlogDbContext context)
     {
@@ -244,15 +245,6 @@ public class BlogRepository : IBlogRepository
 
     }
 
-    public async Task<Category> GetCategoryFromSlugAsync(
-        string slug,
-        CancellationToken cancellationToken = default)
-    {
-        return await _context.Set<Category>()
-            .Where(t => t.UrlSlug == slug)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
     //public async Task<IList<AuthorItem>> GetAuthorsAsync(CancellationToken cancellationToken = default)
     //{
     //    return await _context.Set<Author>()
@@ -380,72 +372,108 @@ public class BlogRepository : IBlogRepository
 	}
 
 
-	public async Task<IPagedList<Category>> GetCategoryByIdAsync(CategoryQuery query, int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+	//CategoryRepository API
+
+	public async Task<IPagedList<CategoryItem>> GetPagedCategoriesAsync(
+		IPagingParams pagingParams,
+		string name = null,
+	   CancellationToken cancellationToken = default)
 	{
-		return await FilterCategory(query).ToPagedListAsync(
-								pageNumber,
-								pageSize,
-								nameof(Category.Name),
-								"DESC",
-								cancellationToken);
-	}
-	private IQueryable<Category> FilterCategory(CategoryQuery query)
-	{
-		IQueryable<Category> categoryQuery = _context.Set<Category>()
-												  .Include(c => c.Posts);
 
-		if (query.ShowOnMenu)
-		{
-			categoryQuery = categoryQuery.Where(x => x.ShowOnMenu);
-		}
-
-		if (!string.IsNullOrWhiteSpace(query.UrlSlug))
-		{
-			categoryQuery = categoryQuery.Where(x => x.UrlSlug == query.UrlSlug);
-		}
-
-		if (!string.IsNullOrWhiteSpace(query.Keyword))
-		{
-			categoryQuery = categoryQuery.Where(x => x.Name.Contains(query.Keyword) ||
-						 x.Description.Contains(query.Keyword) ||
-						 x.Posts.Any(p => p.Title.Contains(query.Keyword)));
-		}
-
-		return categoryQuery;
+		return await _context.Set<Category>()
+			.AsNoTracking()
+			.Where(x => x.Name.Contains(name))
+			.Select(x => new CategoryItem()
+			{
+				Id = x.Id,
+				Name = x.Name,
+				UrlSlug = x.UrlSlug,
+				Description = x.Description,
+				ShowOnMenu = x.ShowOnMenu,
+				PostCount = x.Posts.Count(p => p.Published)
+			})
+			.ToPagedListAsync(pagingParams, cancellationToken);
 	}
 
-	public async Task AddOrUpdateCategoryAsync(Category category, CancellationToken cancellationToken = default)
+
+	public async Task<Category> GetCategoryFromSlugAsync(
+		string slug,
+		CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Category>()
+			.Where(t => t.UrlSlug == slug)
+			.FirstOrDefaultAsync(cancellationToken);
+	}
+
+	public async Task<Category> GetCacheCategoryFromSlugAsync(
+		string slug,
+		CancellationToken cancellationToken = default)
+	{
+		return await _memoryCache.GetOrCreateAsync(
+			$"category.by-slug.{slug}",
+			async (entry) =>
+			{
+				entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+				return await GetCategoryFromSlugAsync(slug, cancellationToken);
+			});
+	}
+
+	public async Task<Category> GetCategoryByIdAsync(int categoryId)
+	{
+		return await _context.Set<Category>().FindAsync(categoryId);
+	}
+
+	public async Task<Category> GetCachedCategoryByIdAsync(int categoryId)
+	{
+		return await _memoryCache.GetOrCreateAsync(
+			$"category.by-id.{categoryId}",
+			async (entry) =>
+			{
+				entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+				return await GetCategoryByIdAsync(categoryId);
+			});
+	}
+
+	public async Task<bool> DeleteCategoryAsync(
+		int categoryId, CancellationToken cancellationToken = default)
+	{
+		var category = await _context.Set<Category>().FindAsync(categoryId);
+
+		if (category is null) return false;
+
+		_context.Set<Category>().Remove(category);
+		var rowsCount = await _context.SaveChangesAsync(cancellationToken);
+
+		return rowsCount > 0;
+	}
+
+
+	public async Task<bool> AddOrUpdateAsync(
+		Category category,
+		CancellationToken cancellationToken = default)
 	{
 		if (category.Id > 0)
-			_context.Update(category);
+		{
+			_context.Categories.Update(category);
+			_memoryCache.Remove($"category.by-id.{category.Id}");
+		}
 		else
-			_context.Add(category);
+		{
+			_context.Categories.Add(category);
+		}
 
-		await _context.SaveChangesAsync(cancellationToken);
+		return await _context.SaveChangesAsync(cancellationToken) > 0;
 	}
 
-	public async Task ChangedCategoryStatusAsync(int id, CancellationToken cancellationToken = default)
+
+	public async Task<bool> IsCategorySlugExistedAsync(
+		int categoryId,
+		string slug,
+		CancellationToken cancellationToken = default)
 	{
-		await _context.Set<Category>()
-						  .Where(x => x.Id == id)
-						  .ExecuteUpdateAsync(c => c.SetProperty(x => x.ShowOnMenu, x => !x.ShowOnMenu), cancellationToken);
-	}
+		return await _context.Categories
+			.AnyAsync(x => x.Id != categoryId && x.UrlSlug == slug, 
+            cancellationToken);
 
-	public async Task DeleteCategoryByIdAsync(int? id, CancellationToken cancellationToken = default)
-	{
-		if (id == null || _context.Categories == null)
-		{
-			Console.WriteLine("Không có danh mục nào");
-			return;
-		}
-		var category = await _context.Set<Category>().FindAsync(id);
-
-		if (category != null)
-		{
-			_context.Categories.Remove(category);
-			await _context.SaveChangesAsync(cancellationToken);
-
-			Console.WriteLine($"Đã xóa danh mục với id {id}");
-		}
 	}
 }
