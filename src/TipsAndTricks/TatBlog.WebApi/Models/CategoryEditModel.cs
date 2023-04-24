@@ -2,6 +2,8 @@
 
 public class CategoryEditModel
 {
+	public int Id { get; set; }
+
 	public string name { get; set; }
 
 	public string UrlSlug { get; set; }

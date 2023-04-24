@@ -47,7 +47,7 @@ public static class CategoryEndpoints
 		ICategoryRepository categoryRepository)
 	{
 		var categoryList = await categoryRepository
-			.GetPagedCategoryAsync(model, model.Name);
+			.GetPagedCategoriesAsync(model, model.Name);
 
 		var paginationResult = new PaginationResult<CategoryItem>(categoryList);
 
